@@ -26,6 +26,20 @@ public class Main {
         Staff staff1 = new Staff("Mrs. Brown", "Clerk");
         Staff staff2 = new Staff("Mr. Green", "Lab Assistant");
 
+        // Demonstrate polymorphism via a List<Person>
+        List<Person> people = new ArrayList<>();
+        // Add students (Student extends Person)
+        people.addAll(students);
+        // Add teachers and staff
+        people.add(teacher1);
+        people.add(teacher2);
+        people.add(staff1);
+        people.add(staff2);
+
+        System.out.println("----- School Directory (Polymorphic Display) -----");
+        displaySchoolDirectory(people);
+        System.out.println();
+
         System.out.println("----- Student Details -----");
         for (Student s : students) {
             s.displayDetails();
@@ -50,11 +64,11 @@ public class Main {
             System.out.println();
         }
 
-        // Attendance Recording
-        records.add(new AttendanceRecord(students.get(0).getId(), courses.get(0).getCourseId(), "Present"));
-        records.add(new AttendanceRecord(students.get(1).getId(), courses.get(1).getCourseId(), "Absent"));
-        records.add(new AttendanceRecord(students.get(2).getId(), courses.get(2).getCourseId(), "Late")); // Invalid status
-        records.add(new AttendanceRecord(students.get(3).getId(), courses.get(0).getCourseId(), "present")); // Lowercase, should be valid
+        // Attendance Recording (now uses Student and Course objects)
+        records.add(new AttendanceRecord(students.get(0), courses.get(0), "Present"));
+        records.add(new AttendanceRecord(students.get(1), courses.get(1), "Absent"));
+        records.add(new AttendanceRecord(students.get(2), courses.get(2), "Late")); // Invalid status
+        records.add(new AttendanceRecord(students.get(3), courses.get(0), "present")); // Lowercase, should be valid
 
         System.out.println("----- Attendance Records -----");
         for (AttendanceRecord record : records) {
@@ -63,8 +77,23 @@ public class Main {
 
         // File Storage
         FileStorageService storage = new FileStorageService();
-        storage.saveData(students, "students.txt");
+        // Prepare list of Students for saving by filtering the polymorphic people list
+        ArrayList<Student> studentsToSave = new ArrayList<>();
+        for (Person p : people) {
+            if (p instanceof Student) {
+                studentsToSave.add((Student) p);
+            }
+        }
+
+        storage.saveData(studentsToSave, "students.txt");
         storage.saveData(courses, "courses.txt");
         storage.saveData(records, "attendance_log.txt");
+    }
+
+    public static void displaySchoolDirectory(List<Person> people) {
+        for (Person person : people) {
+            person.displayDetails();
+            System.out.println();
+        }
     }
 }
