@@ -113,6 +113,64 @@ public class Main {
         attendanceService.displayAttendanceLog(c2); // Physics records
         System.out.println();
 
+        // ===== PART 10: CAPACITY MANAGEMENT & SOLID PRINCIPLES =====
+        System.out.println("\n===== Part 10: Capacity Management & SOLID Principles =====\n");
+
+        // Create courses with specific capacity using createCourse method
+        System.out.println("----- Creating Courses with Capacity -----");
+        Course mathCourse = regService.createCourse("Advanced Mathematics", 2);
+        Course scienceCourse = regService.createCourse("General Science", 3);
+        System.out.println();
+
+        System.out.println("----- Course Details (with Capacity) -----");
+        mathCourse.displayDetails();
+        System.out.println();
+        scienceCourse.displayDetails();
+        System.out.println();
+
+        // Demonstrate student enrollment with capacity checking
+        System.out.println("----- Enrolling Students in Courses -----");
+        regService.enrollStudentInCourse(s1, mathCourse);
+        regService.enrollStudentInCourse(s2, mathCourse);
+        System.out.println();
+
+        // Try to exceed capacity
+        System.out.println("----- Attempting to Exceed Course Capacity -----");
+        regService.enrollStudentInCourse(s3, mathCourse);
+        System.out.println();
+
+        // Enroll students in science course (with available capacity)
+        System.out.println("----- Enrolling Multiple Students in Science Course -----");
+        regService.enrollStudentInCourse(s1, scienceCourse);
+        regService.enrollStudentInCourse(s2, scienceCourse);
+        regService.enrollStudentInCourse(s3, scienceCourse);
+        System.out.println();
+
+        // Try to exceed science course capacity
+        System.out.println("----- Attempting to Exceed Science Course Capacity -----");
+        regService.enrollStudentInCourse(s4, scienceCourse);
+        System.out.println();
+
+        // Display updated course information
+        System.out.println("----- Updated Course Details -----");
+        mathCourse.displayDetails();
+        System.out.println();
+        scienceCourse.displayDetails();
+        System.out.println();
+
+        // Display enrolled students
+        System.out.println("----- Enrolled Students in Math Course -----");
+        for (Student student : mathCourse.getEnrolledStudents()) {
+            System.out.println("  - " + student.getName() + " (ID: " + student.getId() + ")");
+        }
+        System.out.println();
+
+        System.out.println("----- Enrolled Students in Science Course -----");
+        for (Student student : scienceCourse.getEnrolledStudents()) {
+            System.out.println("  - " + student.getName() + " (ID: " + student.getId() + ")");
+        }
+        System.out.println();
+
         // File Storage
         System.out.println("----- File Storage -----");
         // Save registered data using RegistrationService
@@ -121,6 +179,26 @@ public class Main {
         // Save attendance records using AttendanceService
         attendanceService.saveAttendanceLog("attendance_log.txt");
         System.out.println("Total attendance records: " + attendanceService.getRecordCount());
+
+        // SOLID Principles Discussion
+        System.out.println("\n===== SOLID Principles Discussion =====");
+        System.out.println("Part 10 demonstrates the following SOLID principles:\n");
+        System.out.println("1. Single Responsibility Principle (SRP):");
+        System.out.println("   - Course class handles course data management");
+        System.out.println("   - RegistrationService handles enrollment logic separately");
+        System.out.println("   - AttendanceService handles attendance tracking\n");
+        System.out.println("2. Liskov Substitution Principle (LSP):");
+        System.out.println("   - Student extends Person and can be used wherever Person is expected");
+        System.out.println("   - All course types implement Storable interface\n");
+        System.out.println("3. Interface Segregation Principle (ISP):");
+        System.out.println("   - Storable interface defines minimal required methods");
+        System.out.println("   - Classes implement only what they need\n");
+        System.out.println("4. Open/Closed Principle (OCP):");
+        System.out.println("   - New course types can be added without modifying existing code");
+        System.out.println("   - Enrollment validation logic is extensible\n");
+        System.out.println("5. Dependency Inversion Principle (DIP):");
+        System.out.println("   - Services depend on abstractions (Storable, Person)");
+        System.out.println("   - FileStorageService abstracts file operations\n");
     }
 
     public static void displaySchoolDirectory(List<Person> people) {

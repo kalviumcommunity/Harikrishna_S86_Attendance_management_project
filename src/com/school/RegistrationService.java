@@ -67,6 +67,33 @@ public class RegistrationService {
         return courses;
     }
 
+    // Create course with capacity parameter
+    public Course createCourse(String courseName, int capacity) {
+        Course course = new Course(courseName, capacity);
+        courses.add(course);
+        return course;
+    }
+
+    // Enroll a student in a course with capacity checking
+    public boolean enrollStudentInCourse(Student student, Course course) {
+        if (student == null || course == null) {
+            System.out.println("Error: Student or Course is null");
+            return false;
+        }
+
+        if (course.getEnrollmentCount() >= course.getCapacity()) {
+            System.out.println("Error: Course \"" + course.getCourseName() + "\" is full. Capacity: " 
+                    + course.getCapacity() + ", Enrolled: " + course.getEnrollmentCount());
+            return false;
+        }
+
+        boolean enrolled = course.addStudent(student);
+        if (enrolled) {
+            System.out.println("Success: " + student.getName() + " enrolled in " + course.getCourseName());
+        }
+        return enrolled;
+    }
+
     // Save all registered entities to files
     public void saveAll() {
         storage.saveData(students, "students.txt");
