@@ -1,13 +1,13 @@
 package com.school;
 
 public class AttendanceRecord implements Storable {
-    private int studentId;
-    private int courseId;
+    private Student student;
+    private Course course;
     private String status;
 
-    public AttendanceRecord(int studentId, int courseId, String status) {
-        this.studentId = studentId;
-        this.courseId = courseId;
+    public AttendanceRecord(Student student, Course course, String status) {
+        this.student = student;
+        this.course = course;
         if (status != null && (status.equalsIgnoreCase("Present") || status.equalsIgnoreCase("Absent"))) {
             this.status = status;
         } else {
@@ -16,12 +16,12 @@ public class AttendanceRecord implements Storable {
         }
     }
 
-    public int getStudentId() {
-        return studentId;
+    public Student getStudent() {
+        return student;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public Course getCourse() {
+        return course;
     }
 
     public String getStatus() {
@@ -29,11 +29,17 @@ public class AttendanceRecord implements Storable {
     }
 
     public void displayRecord() {
-        System.out.println("Student ID: " + studentId + ", Course ID: C" + courseId + ", Status: " + status);
+        String studentInfo = (student != null) ? (student.getName() + " (ID:" + student.getId() + ")")
+                : "Unknown Student";
+        String courseInfo = (course != null) ? (course.getCourseName() + " (C" + course.getCourseId() + ")")
+                : "Unknown Course";
+        System.out.println("Student: " + studentInfo + ", Course: " + courseInfo + ", Status: " + status);
     }
 
     @Override
     public String toDataString() {
-        return studentId + "," + courseId + "," + status;
+        int sid = (student != null) ? student.getId() : -1;
+        int cid = (course != null) ? course.getCourseId() : -1;
+        return sid + "," + cid + "," + status;
     }
 }
