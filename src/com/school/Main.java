@@ -7,7 +7,6 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<Student> students = new ArrayList<>();
         ArrayList<Course> courses = new ArrayList<>();
-        ArrayList<AttendanceRecord> records = new ArrayList<>();
 
         // Create students using constructor
         students.add(new Student("Alice", "Grade 10"));
@@ -64,18 +63,50 @@ public class Main {
             System.out.println();
         }
 
-        // Attendance Recording (now uses Student and Course objects)
-        records.add(new AttendanceRecord(students.get(0), courses.get(0), "Present"));
-        records.add(new AttendanceRecord(students.get(1), courses.get(1), "Absent"));
-        records.add(new AttendanceRecord(students.get(2), courses.get(2), "Late")); // Invalid status
-        records.add(new AttendanceRecord(students.get(3), courses.get(0), "present")); // Lowercase, should be valid
+        // ===== PART 8: ATTENDANCE SERVICE WITH OVERLOADED METHODS =====
+        AttendanceService attendanceService = new AttendanceService();
 
-        System.out.println("----- Attendance Records -----");
-        for (AttendanceRecord record : records) {
-            record.displayRecord();
-        }
+        // Demonstrate overloaded markAttendance methods
+        System.out.println("\n===== Part 8: Overloaded Attendance Methods =====\n");
+
+        // Method 1: Using Student and Course objects directly
+        System.out.println("----- Method 1: markAttendance(Student, Course, String) -----");
+        attendanceService.markAttendance(students.get(0), courses.get(0), "Present");
+        attendanceService.markAttendance(students.get(1), courses.get(1), "Absent");
+        attendanceService.markAttendance(students.get(2), courses.get(2), "Present");
+        attendanceService.markAttendance(students.get(3), courses.get(0), "Present");
+        System.out.println();
+
+        // Method 2: Using student and course IDs with lookup
+        System.out.println("----- Method 2: markAttendance(int, int, String, Lists) with ID lookup -----");
+        attendanceService.markAttendance(students.get(0).getId(), courses.get(1).getCourseId(), "Absent", students, courses);
+        attendanceService.markAttendance(students.get(1).getId(), courses.get(2).getCourseId(), "Present", students, courses);
+        attendanceService.markAttendance(students.get(2).getId(), courses.get(0).getCourseId(), "Absent", students, courses);
+        System.out.println();
+
+        // Demonstrate overloaded displayAttendanceLog methods
+        System.out.println("----- Method 3: displayAttendanceLog() - All Records -----");
+        attendanceService.displayAttendanceLog();
+        System.out.println();
+
+        // Display records filtered by student
+        System.out.println("----- Method 4: displayAttendanceLog(Student) - Filter by Student -----");
+        attendanceService.displayAttendanceLog(students.get(0)); // Alice's records
+        System.out.println();
+
+        attendanceService.displayAttendanceLog(students.get(1)); // Bob's records
+        System.out.println();
+
+        // Display records filtered by course
+        System.out.println("----- Method 5: displayAttendanceLog(Course) - Filter by Course -----");
+        attendanceService.displayAttendanceLog(courses.get(0)); // Mathematics records
+        System.out.println();
+
+        attendanceService.displayAttendanceLog(courses.get(1)); // Physics records
+        System.out.println();
 
         // File Storage
+        System.out.println("----- File Storage -----");
         FileStorageService storage = new FileStorageService();
         // Prepare list of Students for saving by filtering the polymorphic people list
         ArrayList<Student> studentsToSave = new ArrayList<>();
@@ -87,7 +118,10 @@ public class Main {
 
         storage.saveData(studentsToSave, "students.txt");
         storage.saveData(courses, "courses.txt");
-        storage.saveData(records, "attendance_log.txt");
+        
+        // Save attendance records using AttendanceService
+        attendanceService.saveAttendanceLog("attendance_log.txt");
+        System.out.println("Total attendance records: " + attendanceService.getRecordCount());
     }
 
     public static void displaySchoolDirectory(List<Person> people) {
