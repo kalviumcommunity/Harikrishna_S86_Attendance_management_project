@@ -7,47 +7,42 @@ import java.util.stream.Collectors;
 public class AttendanceService implements Storable {
     private List<AttendanceRecord> attendanceLog;
     private FileStorageService fileStorageService;
+    private RegistrationService registrationService;
 
-    public AttendanceService() {
+    public AttendanceService(RegistrationService registrationService) {
         this.attendanceLog = new ArrayList<>();
         this.fileStorageService = new FileStorageService();
+        this.registrationService = registrationService;
     }
 
     /**
      * Overloaded markAttendance method - using Student and Course objects directly
      * 
      * @param student the Student object
-     * @param course the Course object
-     * @param status the attendance status (Present or Absent)
+     * @param course  the Course object
+     * @param status  the attendance status (Present or Absent)
      */
     public void markAttendance(Student student, Course course, String status) {
         AttendanceRecord record = new AttendanceRecord(student, course, status);
         attendanceLog.add(record);
-        System.out.println("Attendance marked: " + student.getName() + " for " + course.getCourseName() + " - " + status);
+        System.out
+                .println("Attendance marked: " + student.getName() + " for " + course.getCourseName() + " - " + status);
     }
 
     /**
      * Overloaded markAttendance method - using IDs and lookup lists
      * Performs lookups to find Student and Course objects by their IDs
      * 
-     * @param studentId the ID of the student
-     * @param courseId the ID of the course
-     * @param status the attendance status (Present or Absent)
+     * @param studentId   the ID of the student
+     * @param courseId    the ID of the course
+     * @param status      the attendance status (Present or Absent)
      * @param allStudents list of all students for lookup
-     * @param allCourses list of all courses for lookup
+     * @param allCourses  list of all courses for lookup
      */
-    public void markAttendance(int studentId, int courseId, String status, 
-                              List<Student> allStudents, List<Course> allCourses) {
-        Student student = allStudents.stream()
-                .filter(s -> s.getId() == studentId)
-                .findFirst()
-                .orElse(null);
-        
-        Course course = allCourses.stream()
-                .filter(c -> c.getCourseId() == courseId)
-                .findFirst()
-                .orElse(null);
-        
+    public void markAttendance(int studentId, int courseId, String status) {
+        Student student = registrationService.findStudentById(studentId);
+        Course course = registrationService.findCourseById(courseId);
+
         if (student != null && course != null) {
             markAttendance(student, course, status);
         } else {
@@ -77,10 +72,10 @@ public class AttendanceService implements Storable {
      */
     public void displayAttendanceLog(Student student) {
         List<AttendanceRecord> filteredRecords = attendanceLog.stream()
-                .filter(record -> record.getStudent() != null && 
+                .filter(record -> record.getStudent() != null &&
                         record.getStudent().getId() == student.getId())
                 .collect(Collectors.toList());
-        
+
         if (filteredRecords.isEmpty()) {
             System.out.println("No attendance records found for student: " + student.getName());
             return;
@@ -99,10 +94,10 @@ public class AttendanceService implements Storable {
      */
     public void displayAttendanceLog(Course course) {
         List<AttendanceRecord> filteredRecords = attendanceLog.stream()
-                .filter(record -> record.getCourse() != null && 
+                .filter(record -> record.getCourse() != null &&
                         record.getCourse().getCourseId() == course.getCourseId())
                 .collect(Collectors.toList());
-        
+
         if (filteredRecords.isEmpty()) {
             System.out.println("No attendance records found for course: " + course.getCourseName());
             return;
