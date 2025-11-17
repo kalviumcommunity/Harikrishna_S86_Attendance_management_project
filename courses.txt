@@ -1,3 +1,5 @@
-101,Mathematics
-102,Physics
-103,Chemistry
+101,Mathematics,30
+102,Physics,30
+103,Chemistry,30
+104,Advanced Mathematics,2
+105,General Science,3
